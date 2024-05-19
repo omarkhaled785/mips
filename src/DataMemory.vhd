@@ -1,0 +1,52 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+
+entity DataMemory is
+    port ( 
+		clk : in std_logic;
+		Address    : in  STD_LOGIC_VECTOR (31 downto 0);
+		Write_Data : in  STD_LOGIC_VECTOR (31 downto 0);
+		MemRead    : in  STD_LOGIC;
+		MemWrite   : in  STD_LOGIC;
+		Read_Data  : out  STD_LOGIC_VECTOR (31 downto 0)
+	 );
+end DataMemory;
+
+architecture Behavioral of DataMemory is
+	type Memory is array (0 to 15) of STD_LOGIC_VECTOR(31 downto 0);
+	signal DMem : Memory := (
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000", 
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000",
+	"00000000000000000000000000000000"
+	);
+
+begin	
+	process (clk)
+	begin
+		if(rising_edge(clk)) then
+            if(MemRead = '1' and Address < std_logic_vector(to_unsigned(64,32))) then 
+                 Read_Data <= DMem(to_integer(unsigned(Address)/4));
+            end if;
+            if(MemWrite = '1' and Address < std_logic_vector(to_unsigned(64,32))) then
+                DMem(to_integer(unsigned(Address))/4) <= Write_Data;
+            end if;   
+		end if;
+		
+	end process;
+
+end Behavioral;
